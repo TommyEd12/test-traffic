@@ -1,0 +1,33 @@
+.open-project-list-button {
+  position-anchor: --map-anchor;
+  width: 207px;
+  height: 40px;
+  position: absolute;
+  right: calc(anchor(right) + 16px);
+  padding: inherit;
+  top: calc(anchor(top) + 16px);
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0px 4px 4px 1px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+  border-radius: 999px;
+}
+
+.open-project-list-button h2 {
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.open-project-list-button img {
+  width: 24px;
+  aspect-ratio: 1;
+}
+.open-project-list-button span {
+  padding-left: 16px;
+  gap: 16px;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}

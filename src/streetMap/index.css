@@ -1,0 +1,22 @@
+.map-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+}
+
+#marker {
+  z-index: 1000;
+}
+
+#map {
+  position: absolute;
+  anchor-name: --map-anchor;
+  padding: inherit;
+  width: 100%;
+  height: 100%;
+}
+
+#map .ol-control {
+  display: none;
+}
