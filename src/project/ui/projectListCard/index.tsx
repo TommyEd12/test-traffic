@@ -13,8 +13,8 @@ interface ProjectListCardProps {
 
 const ProjectListCard = observer((props: ProjectListCardProps) => {
   const [activeTab, setActiveTab] = useState<
-    "verified" | "review" | "unverified"
-  >("verified");
+    "verified" | "review" | "unverified" | null
+  >(null);
 
   const getProjectsByStatus = (status: Project["status"]) => {
     return projectStore.allProjects.filter(
@@ -31,27 +31,32 @@ const ProjectListCard = observer((props: ProjectListCardProps) => {
       id: "verified" as const,
       label: `Проверенные (${verifiedProjects.length})`,
       color: "#d4f2d6",
-      textColor: "#2d6e2f",
+      textColor: "rgba(45, 110, 47, 1)",
       projects: verifiedProjects,
     },
     {
       id: "review" as const,
       label: `На проверке (${reviewProjects.length})`,
       color: "#ecf1ae",
-      textColor: "#545422",
+      textColor: "rgba(84, 84, 34, 1)",
       projects: reviewProjects,
     },
     {
       id: "unverified" as const,
       label: `Непроверенные (${unverifiedProjects.length})`,
       color: "#c9cacf",
-      textColor: "#6d6f78",
+      textColor: "rgba(242, 242, 242, 1)",
       projects: unverifiedProjects,
     },
   ];
 
-  const currentProjects =
-    tabs.find((tab) => tab.id === activeTab)?.projects || [];
+  const currentProjects = activeTab
+    ? tabs.find((tab) => tab.id === activeTab)?.projects || []
+    : projectStore.allProjects;
+
+  const handleTabClick = (tabId: "verified" | "review" | "unverified") => {
+    setActiveTab(activeTab === tabId ? null : tabId);
+  };
 
   const handleDeleteProject = (title: string, author: string) => {
     projectStore.deleteProject(title, author);
@@ -81,23 +86,25 @@ const ProjectListCard = observer((props: ProjectListCardProps) => {
           <h1 className="project-modal__title">Список проектов</h1>
           <X className="project-modal__close-icon" onClick={props.onClose} />
         </div>
-
         <div className="project-modal__tabs">
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className="project-modal__tab"
+              onClick={() => handleTabClick(tab.id)}
+              className={`project-modal__tab ${
+                activeTab === tab.id ? "project-modal__tab--active" : ""
+              }`}
               style={{
                 backgroundColor: tab.color,
-                color: tab.textColor,
+                color: activeTab === tab.id ? "#6d6f78" : tab.textColor,
+                border: `1px solid ${tab.color}`,
               }}
             >
+              <span className="project-modal_gradient_circle" style={{background: `radial-gradient(${tab.color}, ${tab.textColor}, rgb(255, 255, 255))`}}></span>
               {tab.label}
             </button>
           ))}
         </div>
-
         <div className="project-modal__content">
           {currentProjects.length === 0 ? (
             <div className="project-modal__empty">
@@ -112,33 +119,41 @@ const ProjectListCard = observer((props: ProjectListCardProps) => {
                 >
                   <div className="project-card__content">
                     <div className="project-card__image">
-                      {project.image ? (
+                      {project.image !== "" ? (
                         <img
-                          src={project.image || "/placeholder.svg"}
+                          src={
+                            project.image ||
+                            "../../../../public/image-placeholder.png"
+                          }
                           alt={project.title}
                           className="project-card__img"
                         />
                       ) : (
-                        <span className="project-card__placeholder">
-                          image placeholder
-                        </span>
+                        <>
+                          <img
+                            src={"../../../../public/image-placeholder.png"}
+                            alt={project.title}
+                            className="project-card__img"
+                          />
+                        </>
                       )}
                     </div>
-
                     <div className="project-card__info">
                       <div className="project-card__header">
                         <h3 className="project-card__title">{project.title}</h3>
-                        {project.status === "Проверен" &&
-                          project.rating >= 0 && (
-                            <div className="project-card__rating">
-                              <Star className="project-card__rating-icon" />
-                              <span className="project-card__rating-text">
-                                {project.rating > 999 ? "999+" : project.rating}
-                              </span>
-                            </div>
-                          )}
+                        {project.status === "Проверен" && (
+                          <div className="project-card__rating">
+                            <Star className="project-card__rating-icon" />
+                            <span className="project-card__rating-text">
+                              {project.rating === 0
+                                ? "Rating"
+                                : project.rating > 999
+                                ? "999+"
+                                : project.rating}
+                            </span>
+                          </div>
+                        )}
                       </div>
-
                       <div className="project-card__meta">
                         <span>{formatDate(project.created)}</span>
                         <span className="project-card__separator">•</span>
@@ -146,7 +161,6 @@ const ProjectListCard = observer((props: ProjectListCardProps) => {
                           {project.author}
                         </span>
                       </div>
-
                       <div className="project-card__actions">
                         <button
                           className="project-card__action-btn"

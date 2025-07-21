@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { MapPinPlus } from "lucide-react";
 import "./index.css";
 import { AddProjectCard } from "../addProjectCard";

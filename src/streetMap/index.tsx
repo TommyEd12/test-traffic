@@ -1,5 +1,5 @@
 import { Map, MapBrowserEvent, Overlay, View } from "ol";
-import React, { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import "./index.css";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
@@ -15,6 +15,7 @@ export const StreetMap = observer(() => {
   const overlaysRef = useRef<Overlay[]>([]);
   const lastAddedMarkerRef = useRef<Overlay | null>(null);
   const viewRef = useRef<View | null>(null);
+  const { projects } = projectStore;
 
   useEffect(() => {
     const map = new Map({
@@ -25,9 +26,22 @@ export const StreetMap = observer(() => {
     mapRef.current = map;
     viewRef.current = map.getView();
 
-    renderAllProjectMarkers();
+    projectStore.projects.forEach((project) => {
+      const markerElement = document.createElement("div");
+      const root = createRoot(markerElement);
+      root.render(<MapPin size={24} />);
 
-    map.on("click", (e: MapBrowserEvent<PointerEvent>) => {
+      const markerOverlay = new Overlay({
+        element: markerElement,
+        position: [project.coordinateX, project.coordinateY],
+        positioning: "bottom-center",
+      });
+
+      mapRef.current?.addOverlay(markerOverlay);
+      overlaysRef.current.push(markerOverlay);
+    });
+
+    map.on("click", (e: MapBrowserEvent) => {
       if (projectStore.isOpenForAddingMark) {
         projectStore.setCurrentCoordinates(e.coordinate[0], e.coordinate[1]);
         addTemporaryMarker(e.coordinate);
@@ -36,16 +50,37 @@ export const StreetMap = observer(() => {
 
     return () => {
       map.setTarget(undefined);
+      overlaysRef.current.forEach((overlay) =>
+        mapRef.current?.removeOverlay(overlay)
+      );
+      overlaysRef.current = [];
     };
   }, []);
 
   useEffect(() => {
     if (mapRef.current) {
-      renderAllProjectMarkers();
-    }
-  }, [projectStore.projects]);
+      overlaysRef.current.forEach((overlay) =>
+        mapRef.current?.removeOverlay(overlay)
+      );
+      overlaysRef.current = [];
+      projectStore.projects.forEach((project) => {
+        const markerElement = document.createElement("div");
+        const root = createRoot(markerElement);
+        root.render(<MapPin size={24} />);
 
-  const addTemporaryMarker = (coordinate: [number, number]) => {
+        const markerOverlay = new Overlay({
+          element: markerElement,
+          position: [project.coordinateX, project.coordinateY],
+          positioning: "bottom-center",
+        });
+
+        mapRef.current?.addOverlay(markerOverlay);
+        overlaysRef.current.push(markerOverlay);
+      });
+    }
+  }, [projects]);
+
+  const addTemporaryMarker = (coordinate: number[]) => {
     if (!mapRef.current) return;
 
     if (lastAddedMarkerRef.current) {
@@ -66,36 +101,10 @@ export const StreetMap = observer(() => {
     lastAddedMarkerRef.current = markerOverlay;
   };
 
-  const renderAllProjectMarkers = () => {
-    if (!mapRef.current) return;
-
-    overlaysRef.current.forEach((overlay) => {
-      if (overlay !== lastAddedMarkerRef.current) {
-        mapRef.current?.removeOverlay(overlay);
-      }
-    });
-    overlaysRef.current = [];
-
-    projectStore.projects.forEach((project) => {
-      const markerElement = document.createElement("div");
-      const root = createRoot(markerElement);
-      root.render(<MapPin size={24} />);
-
-      const markerOverlay = new Overlay({
-        element: markerElement,
-        position: [project.coordinateX, project.coordinateY],
-        positioning: "bottom-center",
-      });
-
-      mapRef.current.addOverlay(markerOverlay);
-      overlaysRef.current.push(markerOverlay);
-    });
-  };
-
   const centerOnMark = useCallback((coordinates: number[]) => {
     const size = mapRef.current?.getSize();
     console.log(coordinates, size, viewRef.current);
-    let newView = new View({ center: coordinates, zoom: 15 });
+    const newView = new View({ center: coordinates, zoom: 15 });
     mapRef.current?.setView(newView);
   }, []);
 

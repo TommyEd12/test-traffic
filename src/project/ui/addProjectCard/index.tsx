@@ -1,4 +1,3 @@
-import React from "react";
 import "./index.css";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import type { Project } from "../../dto";
@@ -46,9 +45,11 @@ export const AddProjectCard = observer((props: addProjectCardProps) => {
         <div className="form-part">
           <label htmlFor="status">Статус</label>
           <select id="status" {...register("status", { required: true })}>
-            <option value="Проверен">Проверен</option>
-            <option value="Проверен">На проверке</option>
-            <option value="Проверен">Не проверен</option>
+            <option value="Проверен">
+              Проверен
+            </option>
+            <option value="На проверке">На проверке</option>
+            <option value="Не проверен">Не проверен</option>
           </select>
         </div>
         <div className="form-part">

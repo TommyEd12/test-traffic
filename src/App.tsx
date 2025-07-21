@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./assets/fonts/Inter_18pt-Regular.ttf";
 import "./App.css";
 

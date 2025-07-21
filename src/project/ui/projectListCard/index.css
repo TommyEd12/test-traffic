@@ -14,13 +14,19 @@
   margin-left: auto;
 }
 
+.project-modal_gradient_circle{
+  width: 16px;
+  border-radius: 999px;
+  height: 16px;
+
+}
+
 .project-modal__container {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-/* Header */
 .project-modal__header {
   display: flex;
   align-items: center;
@@ -29,9 +35,9 @@
 }
 
 .project-modal__title {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #000000;
+  font-size: 18px;
+  font-weight: 400;
+  color: rgba(23, 24, 28, 1);
   margin: 0;
 }
 
@@ -50,22 +56,31 @@
   width: 1.25rem;
 }
 
-/* Filter Tabs */
 .project-modal__tabs {
   display: flex;
   gap: 0.75rem;
+  margin-top: 24px;
   padding: 0 1.5rem 1.5rem 1.5rem;
 }
 
 .project-modal__tab {
-  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  gap: 4px;
   border-radius: 9999px;
-  font-size: 0.875rem;
+  font-size: 12px;
   font-weight: 500;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
+  height:16px;
+  text-wrap: nowrap;
+  text-align: center;
+  
 }
+
+
 
 .project-modal__tab:hover {
   opacity: 0.8;
@@ -157,7 +172,7 @@
 
 .project-card__rating {
   display: flex;
-  align-items: center;
+  align-items: start;
   gap: 0.25rem;
   color: #6d6f78;
   flex-shrink: 0;
@@ -169,10 +184,11 @@
 }
 
 .project-card__rating-text {
+  text-wrap: wrap;
   font-size: 0.875rem;
 }
 
-/* Project Meta */
+
 .project-card__meta {
   display: flex;
   align-items: center;

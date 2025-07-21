@@ -81,7 +81,7 @@ class ProjectStore {
   }
 
   get allProjects() {
-    return this.projects.slice();
+    return this.projects;
   }
 }
 
