@@ -13,7 +13,6 @@ import { createRoot } from "react-dom/client";
 export const StreetMap = observer(() => {
   const mapRef = useRef<Map | null>(null);
   const overlaysRef = useRef<Overlay[]>([]);
-  const lastAddedMarkerRef = useRef<Overlay | null>(null);
   const viewRef = useRef<View | null>(null);
   const { projects } = projectStore;
 
@@ -83,8 +82,6 @@ export const StreetMap = observer(() => {
   const addTemporaryMarker = (coordinate: number[]) => {
     if (!mapRef.current) return;
 
-    
-
     const markerElement = document.createElement("div");
     const root = createRoot(markerElement);
     root.render(<MapPin size={24} />);
@@ -96,7 +93,6 @@ export const StreetMap = observer(() => {
     });
 
     mapRef.current.addOverlay(markerOverlay);
-    lastAddedMarkerRef.current = markerOverlay;
   };
 
   const centerOnMark = useCallback((coordinates: number[]) => {
