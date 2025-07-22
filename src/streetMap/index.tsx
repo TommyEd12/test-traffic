@@ -83,9 +83,7 @@ export const StreetMap = observer(() => {
   const addTemporaryMarker = (coordinate: number[]) => {
     if (!mapRef.current) return;
 
-    if (lastAddedMarkerRef.current) {
-      mapRef.current.removeOverlay(lastAddedMarkerRef.current);
-    }
+    
 
     const markerElement = document.createElement("div");
     const root = createRoot(markerElement);
