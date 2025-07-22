@@ -20,16 +20,21 @@ class ProjectStore {
     );
   }
 
-  private loadProjects() {
+    private loadProjects() {
     const savedProjects = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (savedProjects) {
       try {
-        this.projects = JSON.parse(savedProjects);
+        const parsedProjects: Project[] = JSON.parse(savedProjects);
+        this.projects = parsedProjects.map(project => ({
+          ...project,
+          rating: typeof project.rating === 'string' ? parseInt(project.rating, 10) : project.rating || 0,
+        }));
       } catch (error) {
         console.error(error);
       }
     }
   }
+
 
   private saveProjects() {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.projects));
@@ -76,13 +81,15 @@ class ProjectStore {
     );
 
     if (project && project.status === "Проверен") {
-      project.rating += 1;
+      project.rating = +(project.rating || 0) + 1; 
+      this.saveProjects(); 
     }
   }
 
   get allProjects() {
     return this.projects;
   }
+
 }
 
 const projectStore = new ProjectStore();
